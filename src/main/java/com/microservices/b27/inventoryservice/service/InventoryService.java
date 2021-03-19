@@ -10,4 +10,6 @@ public interface InventoryService {
     InventoryDetailsResponseVO addItem(InventoryDetailsRequestVO inventoryDetailsRequestVO) throws ItemAlreadyExistsException, InventoryBadRequestException;
 
     InventoryDetailsResponseVO getItem(String itemName) throws ItemNotFoundException;
+
+    void deleteItem(String  itemName) throws ItemNotFoundException;
 }

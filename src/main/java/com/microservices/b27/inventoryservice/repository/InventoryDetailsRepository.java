@@ -12,4 +12,5 @@ public interface InventoryDetailsRepository extends JpaRepository<InventoryDetai
     Optional<InventoryDetails> findByItemNameAndManufacturer (String itemName, String manufacturer);
 
     Optional<InventoryDetails> findByItemName(String itemName);
+
 }

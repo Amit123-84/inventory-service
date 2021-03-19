@@ -56,6 +56,16 @@ public class InventoryServiceImpl implements InventoryService{
         return constructInventoryDetailsResponseVO(inventoryDetails.get());
     }
 
+    @Override
+    public void deleteItem(String itemName) throws ItemNotFoundException {
+        Optional<InventoryDetails> inventoryDetails = inventoryDetailsRepository.findByItemName(itemName);
+        if (!inventoryDetails.isPresent()) {
+            throw new ItemNotFoundException(ResponseConstants.NOT_FOUND.name + itemName);
+        }
+        inventoryDetailsRepository.deleteById(inventoryDetails.get().getItemId());
+
+    }
+
     private InventoryDetails constructInventoryDetails(InventoryDetailsRequestVO inventoryDetailsRequestVO){
         InventoryDetails inventoryDetails=new InventoryDetails();
         BeanUtils.copyProperties(inventoryDetailsRequestVO, inventoryDetails);
