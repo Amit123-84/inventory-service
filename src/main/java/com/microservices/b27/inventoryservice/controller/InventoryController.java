@@ -6,11 +6,17 @@ import com.microservices.b27.inventoryservice.model.constants.ResponseConstants;
 import com.microservices.b27.inventoryservice.model.valueobjects.InventoryDetailsRequestVO;
 import com.microservices.b27.inventoryservice.model.valueobjects.InventoryDetailsResponseVO;
 import com.microservices.b27.inventoryservice.service.InventoryService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+
 
 @RestController
 public class InventoryController {
@@ -18,6 +24,7 @@ public class InventoryController {
     @Autowired
     InventoryService inventoryService;
 
+    private Logger logger= LoggerFactory.getLogger(InventoryController.class);
 
     @GetMapping("/inventoryService/getInventoryDetails/{itemName}")
     public ResponseEntity<InventoryDetailsResponseVO> getProductInventoryDetails(@PathVariable String itemName)
@@ -43,6 +50,18 @@ public class InventoryController {
             inventoryService.deleteItem(itemName);
             return ResponseEntity.accepted().build();
 
+    }
+
+    @GetMapping("/inventoryService/getPromotion")
+    @CircuitBreaker(name = "default", fallbackMethod = "fallbackResponse")
+    public String getPromotionDetailsRetry(){
+        logger.info("Get Promotion Invoked");
+        ResponseEntity<String> stringResponseEntity= new RestTemplate().getForEntity("dummyUrl",String.class);
+        return stringResponseEntity.getBody();
+    }
+
+    private String fallbackResponse(Exception ex){
+        return "DummyFallbackResponse";
     }
 
 
